@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dry_crud_jsonapi_swagger (0.1.0)
+    dry_crud_jsonapi_swagger (0.1.1)
       dry_crud_jsonapi (~> 0.1.0)
       rswag-ui (~> 2.0.5)
       swagger-blocks (~> 2.0.2)
