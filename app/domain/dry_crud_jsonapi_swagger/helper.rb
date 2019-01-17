@@ -1,4 +1,4 @@
-module Swagger
+module DryCrudJsonapiSwagger
   module Helper
 
     def setup_swagger_path(path, helper = self, &block)
@@ -76,7 +76,7 @@ module Swagger
     def setup_tags(swagger_doc)
       swagger_doc.key :tags, [
         'All',
-        Swagger::TagsSetup.path_tag(@path)
+        TagsSetup.path_tag(@path)
       ]
     end
 
@@ -125,6 +125,5 @@ module Swagger
         end
       end
     end
-
   end
 end

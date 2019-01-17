@@ -1,4 +1,4 @@
-module Swagger
+module DryCrudJsonapiSwagger
   class Setup
     attr_reader :request_uri, :controller_classes
 
@@ -21,7 +21,7 @@ module Swagger
     end
 
     def setup_tags(swagger_doc)
-      Swagger::TagsSetup.new(swagger_doc).run
+      TagsSetup.new(swagger_doc).run
     end
 
     private
@@ -93,10 +93,8 @@ module Swagger
 
     def setup_controller(controller_class)
       controller_class.send :include, Swagger::Blocks
-      Swagger::ControllerSetup.new(controller_class).run
-      Swagger::NestedControllerSetup.new(controller_classes, controller_class).run
+      ControllerSetup.new(controller_class).run
+      NestedControllerSetup.new(controller_classes, controller_class).run
     end
-
   end
-
 end

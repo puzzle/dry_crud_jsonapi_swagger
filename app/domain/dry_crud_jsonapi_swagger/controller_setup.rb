@@ -1,7 +1,7 @@
-module Swagger
+module DryCrudJsonapiSwagger
   class ControllerSetup
     include Rails.application.routes.url_helpers
-    include Swagger::Helper
+    include Helper
     attr_reader :controller_class
 
     def initialize(controller_class)
@@ -32,6 +32,5 @@ module Swagger
     def index_path
       polymorphic_path(model_name.route_key) rescue nil
     end
-
   end
 end

@@ -1,4 +1,6 @@
-Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => '/apidocs'
-  get 'apidocs', to: 'apidocs#show', constraints: { format: 'json' }
+DryCrudJsonapiSwagger::Engine.routes.draw do
+  mount Rswag::Ui::Engine => '/'
+  get '/swagger.json', module: 'dry_crud_jsonapi_swagger', controller: 'apidocs', action: 'show', constraints: { format: 'json' }
 end
+
+

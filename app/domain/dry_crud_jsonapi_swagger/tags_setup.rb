@@ -1,4 +1,4 @@
-module Swagger
+module DryCrudJsonapiSwagger
   class TagsSetup
 
     def initialize(swagger_doc = nil)
@@ -41,6 +41,5 @@ module Swagger
       require 'yaml'
       YAML.load_file(Rails.root.join('config', 'swagger-tags.yml')) # TODO: what is this for? fill yml with sensible values
     end
-
   end
 end

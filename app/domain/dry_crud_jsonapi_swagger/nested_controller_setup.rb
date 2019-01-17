@@ -1,7 +1,7 @@
-module Swagger
+module DryCrudJsonapiSwagger
   class NestedControllerSetup
     include Rails.application.routes.url_helpers
-    include Swagger::Helper
+    include Helper
 
     attr_reader :controller_class, :controller_classes, :nested_class
 
@@ -48,6 +48,5 @@ module Swagger
 
       nested.flatten.include? controller_class.model_class
     end
-
   end
 end
