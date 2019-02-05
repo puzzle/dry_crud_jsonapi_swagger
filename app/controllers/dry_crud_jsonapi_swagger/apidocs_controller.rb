@@ -24,8 +24,8 @@ module DryCrudJsonapiSwagger
     end
 
     def json_api_controllers
-      ListController.descendants.select { |model| model.include?(DryCrudJsonapi) }.select do |controller|
-        controller.model_class rescue false
+      ActionController::Base.descendants.select do |controller|
+        controller.include?(DryCrudJsonapi) && controller&.model_class.present?
       end
     end
   end
