@@ -64,7 +64,7 @@ module DryCrudJsonapiSwagger
 
       swagger_doc.operation :get do
         key :summary, summary
-        helper.setup_tags(self)
+        helper.setup_tag(self)
         helper.parameters(self, helper, type)
         response 200 do
           key :description, summary + ' Response'
@@ -73,16 +73,17 @@ module DryCrudJsonapiSwagger
       end
     end
 
-    def setup_tags(swagger_doc)
-      swagger_doc.key :tags, [
-        'All',
-        TagsSetup.path_tag(@path)
-      ]
+    def setup_tag(swagger_doc)
+      tag = TagsSetup.new.path_tag(@path)
+      swagger_doc.key :tags, [tag] if tag.present?
     end
 
     def parameters(swagger_doc, helper, type)
       case type.to_sym
-      when :show, :nested then parameter_id swagger_doc, helper
+      when :index
+        parameter_custom swagger_doc, type
+      when :show, :nested
+        parameter_id swagger_doc, helper
       end
 
       parameter_include swagger_doc, helper, type
@@ -109,6 +110,19 @@ module DryCrudJsonapiSwagger
         key :description, desc
         key :required,    false
         key :type,        :string
+      end
+    end
+
+    def parameter_custom(swagger_doc, type)
+      controller_class.swagger_params[type].each do |param|
+        swagger_doc.parameter do
+          key :name,        param.name
+          key :in,          :query
+          key :description, param.description
+          key :required,    param.required
+          key :type,        param.type
+          key :enum,        param.enum if param.enum.present?
+        end
       end
     end
 

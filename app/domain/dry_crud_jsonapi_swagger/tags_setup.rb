@@ -1,3 +1,5 @@
+require 'yaml'
+
 module DryCrudJsonapiSwagger
   class TagsSetup
 
@@ -9,37 +11,46 @@ module DryCrudJsonapiSwagger
       setup_tags
     end
 
-    def self.path_tag(path)
-      new.get_tag_by_path(path)
-    end
-
-    def get_tag_by_path(path)
-      tags.each do |tag|
-        next if tag['include'].blank?
-
-        tag['include'].each do |inc|
-          return tag['name'] if path =~ /#{inc}/i
-        end
-
-      end
+    def path_tag(path)
+      customized_tag(path) || derived_tag(path)
     end
 
     private
 
+    def customized_tag(path)
+      customized_tags.each do |tag|
+        next if tag['include'].blank?
+
+        return tag['name'] if tag['include'].any? { |inc| path =~ /#{inc}/i }
+      end
+      
+      nil
+    end
+
+    def derived_tag(path)
+      path.gsub(%r(/{[^}]+}), '').gsub('/', ' ').strip.titleize
+    end
 
     def setup_tags
-      tags.each do |tag|
+      customized_tags.each do |tag|
         @swagger_doc.tags tag.slice('name', 'description', 'externalDocs')
       end
     end
 
-    def tags
-      @tags ||= load_tags['tags']
+    def customized_tags
+      @customized_tags ||= load_customized_tags
     end
 
-    def load_tags
-      require 'yaml'
-      YAML.load_file(Rails.root.join('config', 'swagger-tags.yml')) # TODO: what is this for? fill yml with sensible values
+    def load_customized_tags
+      return [] unless File.exist?(Rails.root.join('config', 'swagger-tags.yml'))
+
+      YAML.load_file(Rails.root.join('config', 'swagger-tags.yml')).yield_self do |tags_data|
+        raise('Your config/swagger-tags.yml contains malformed data') unless
+          Array.wrap(tags_data&.keys).include?('tags') &&
+          Array.wrap(tags_data['tags']).all? { |tag| tag.is_a?(Hash) }
+
+        Array.wrap(tags_data['tags'])
+      end
     end
   end
 end
