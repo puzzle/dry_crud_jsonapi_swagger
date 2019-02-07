@@ -37,21 +37,20 @@ module DryCrudJsonapiSwagger
       nested_class.model_class.model_name
     end
 
-    def description(controller = controller_class)
-      # relationships = controller.model_class
-      #   .reflect_on_all_associations(:belongs_to)
-      #   .map(&:name).sort
-      #
-      # relationships += controller.model_class
-      # .reflect_on_all_associations(:has_many)
-      # .map(&:name).sort
+    def include_description(controller = controller_class)
+      <<~DESC
+        Available primary relations:
+        #{includes(controller.model_class).map { |inc| "* #{inc}" }.join("\n")}
 
-      relationships = controller.model_class
-        .reflect_on_all_associations
-        .map(&:name).sort
+        Separate values with a comma
 
-      'The following relationships are available: ' \
-        "#{relationships.join(', ')} (separate values with a comma)"
+        To include sub-relations, specify the relationship chain with the elements separated by '.'
+        i.e. "employee.address.town"
+      DESC
+    end
+
+    def includes(model_class)
+      model_class.reflect_on_all_associations.reject(&:polymorphic?).map(&:name).sort
     end
 
     def path_spec(swagger_doc, helper, type) # rubocop:disable Metrics/MethodLength
@@ -101,15 +100,19 @@ module DryCrudJsonapiSwagger
 
     def parameter_include(swagger_doc, helper, type) # rubocop:disable Metrics/MethodLength
       desc = case type.to_sym
-             when :index, :show then description
-             when :nested       then description helper.nested_class
+               when :index, :show then include_description
+               when :nested       then include_description(helper.nested_class)
              end
       swagger_doc.parameter do
-        key :name,        :include
-        key :in,          :query
-        key :description, desc
-        key :required,    false
-        key :type,        :string
+        key :name,             :include
+        key :in,               :query
+        key :description,      desc
+        key :required,         false
+        key :type,             :array
+        key :collectionFormat, :csv
+        items do
+          key :type, :string
+        end
       end
     end
 
