@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dry_crud_jsonapi_swagger (0.1.1)
+    dry_crud_jsonapi_swagger (0.2.0)
       dry_crud_jsonapi (~> 0.1.0)
       rswag-ui (~> 2.0.5)
       swagger-blocks (~> 2.0.2)
@@ -60,7 +60,7 @@ GEM
     erubi (1.8.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    i18n (1.5.2)
+    i18n (1.5.3)
       concurrent-ruby (~> 1.0)
     jsonapi-deserializable (0.2.0)
     jsonapi-parser (0.1.1)
